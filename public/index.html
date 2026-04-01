@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Amboras — Theme Intelligence POC</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f0f0f;
+      color: #f0f0f0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .header {
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .header p {
+      font-size: 0.95rem;
+      color: #888;
+      margin-top: 0.4rem;
+    }
+
+    .chat-box {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 1.5rem;
+      min-height: 200px;
+      max-height: 400px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .message {
+      padding: 0.8rem 1rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .message.user {
+      background: #2a2a2a;
+      color: #f0f0f0;
+      align-self: flex-end;
+      max-width: 80%;
+    }
+
+    .message.ai {
+      background: #1e3a2f;
+      color: #7effc4;
+      align-self: flex-start;
+      max-width: 90%;
+    }
+
+    .message.thinking {
+      background: #1a1a1a;
+      color: #666;
+      font-style: italic;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    input {
+      flex: 1;
+      padding: 0.9rem 1.2rem;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      color: #f0f0f0;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #444;
+    }
+
+    button {
+      padding: 0.9rem 1.5rem;
+      background: #ffffff;
+      color: #000000;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #e0e0e0;
+    }
+
+    button:disabled {
+      background: #333;
+      color: #666;
+      cursor: not-allowed;
+    }
+
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .suggestion {
+      padding: 0.4rem 0.9rem;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: #888;
+      cursor: pointer;
+    }
+
+    .suggestion:hover {
+      border-color: #444;
+      color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Amboras Theme Intelligence</h1>
+      <p>Ask anything about this Shopify store's design system</p>
+    </div>
+
+    <div class="chat-box" id="chatBox">
+      <div class="message ai">
+        👋 I've analyzed the Dawn theme. Ask me anything about its colors, fonts, sections, or structure.
+      </div>
+    </div>
+
+    <div class="suggestions">
+      <span class="suggestion" onclick="ask('What colors are used in this theme?')">What colors are used?</span>
+      <span class="suggestion" onclick="ask('What fonts does this theme use?')">What fonts are used?</span>
+      <span class="suggestion" onclick="ask('What sections are available?')">What sections exist?</span>
+      <span class="suggestion" onclick="ask('What is the button style?')">Button styles?</span>
+    </div>
+
+    <div class="input-area">
+      <input
+        type="text"
+        id="questionInput"
+        placeholder="Ask about this theme..."
+        onkeydown="if(event.key === 'Enter') sendMessage()"
+      />
+      <button id="sendBtn" onclick="sendMessage()">Ask</button>
+    </div>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById('questionInput')
+      const question = input.value.trim()
+      if (!question) return
+
+      input.value = ''
+      addMessage(question, 'user')
+      addMessage('Thinking...', 'thinking', 'thinkingMsg')
+
+      document.getElementById('sendBtn').disabled = true
+
+      try {
+        const res = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question })
+        })
+
+        const data = await res.json()
+        removeMessage('thinkingMsg')
+        addMessage(data.answer || data.error, 'ai')
+      } catch (err) {
+        removeMessage('thinkingMsg')
+        addMessage('Something went wrong. Try again.', 'ai')
+      }
+
+      document.getElementById('sendBtn').disabled = false
+    }
+
+    function ask(question) {
+      document.getElementById('questionInput').value = question
+      sendMessage()
+    }
+
+    function addMessage(text, type, id = null) {
+      const box = document.getElementById('chatBox')
+      const msg = document.createElement('div')
+      msg.className = `message ${type}`
+      msg.textContent = text
+      if (id) msg.id = id
+      box.appendChild(msg)
+      box.scrollTop = box.scrollHeight
+    }
+
+    function removeMessage(id) {
+      const el = document.getElementById(id)
+      if (el) el.remove()
+    }
+  </script>
+</body>
+</html>
