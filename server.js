@@ -1,17 +1,8 @@
 import express from 'express'
 import { askQuestion } from './src/chat.js'
-import { execSync } from 'child_process'
-import { existsSync } from 'fs'
 import dotenv from 'dotenv'
 
 dotenv.config()
-
-// Download dawn theme if it doesn't exist (for Railway deployment)
-if (!existsSync('./dawn-theme')) {
-  console.log(' Downloading Dawn theme...')
-  execSync('npx tiged Shopify/dawn dawn-theme', { stdio: 'inherit' })
-  console.log(' Dawn theme downloaded')
-}
 
 const app = express()
 app.use(express.json())
