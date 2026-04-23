@@ -3,125 +3,130 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Amboras — Theme Intelligence POC</title>
+  <title>Theme Intelligence - POC</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    :root {
+      --bg-0: #090b10;
+      --bg-1: #0f131b;
+      --bg-2: #151b24;
+      --bg-3: #1c2532;
+      --border-1: #2a3343;
+      --text-1: #e8edf8;
+      --text-2: #a0adbf;
+      --accent: #7ea5ff;
+      --accent-soft: #2b3f67;
+      --ai-bubble: #18263e;
+      --user-bubble: #232e40;
+      --success-soft: #87ffd6;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #0f0f0f;
-      color: #f0f0f0;
-      height: 100vh;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background:
+        radial-gradient(1200px 700px at 10% -10%, #172338 0%, transparent 55%),
+        radial-gradient(1000px 600px at 100% 0%, #141d2e 0%, transparent 50%),
+        var(--bg-0);
+      color: var(--text-1);
+      min-height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
+      padding: 2rem 1rem;
     }
 
     .container {
       width: 100%;
-      max-width: 700px;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .header {
-      text-align: center;
-    }
-
-    .header h1 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #ffffff;
-    }
-
-    .header p {
-      font-size: 0.95rem;
-      color: #888;
-      margin-top: 0.4rem;
-    }
-
-    .chat-box {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 12px;
-      padding: 1.5rem;
-      min-height: 200px;
-      max-height: 400px;
-      overflow-y: auto;
+      max-width: 760px;
+      padding: 1.25rem;
+      border: 1px solid var(--border-1);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(21, 27, 36, 0.95) 0%, rgba(15, 19, 27, 0.98) 100%);
+      box-shadow:
+        0 18px 50px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
       display: flex;
       flex-direction: column;
       gap: 1rem;
     }
 
+    .header {
+      text-align: center;
+      padding: 0.5rem 0;
+    }
+
+    .header h1 {
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: #f8fbff;
+      letter-spacing: 0.01em;
+    }
+
+    .header p {
+      font-size: 0.9rem;
+      color: var(--text-2);
+      margin-top: 0.45rem;
+    }
+
+    .chat-box {
+      background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
+      border: 1px solid var(--border-1);
+      border-radius: 12px;
+      padding: 1rem;
+      min-height: 280px;
+      max-height: 420px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .chat-box::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .chat-box::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .chat-box::-webkit-scrollbar-thumb {
+      background: #324057;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      background-clip: content-box;
+    }
+
     .message {
-      padding: 0.8rem 1rem;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      line-height: 1.6;
+      padding: 0.75rem 0.9rem;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      white-space: pre-line;
+      border: 1px solid transparent;
     }
 
     .message.user {
-      background: #2a2a2a;
-      color: #f0f0f0;
+      background: var(--user-bubble);
+      border-color: #384962;
+      color: #edf3ff;
       align-self: flex-end;
-      max-width: 80%;
+      max-width: 82%;
     }
 
     .message.ai {
-      background: #1e3a2f;
-      color: #7effc4;
+      background: var(--ai-bubble);
+      border-color: #324a71;
+      color: var(--success-soft);
       align-self: flex-start;
-      max-width: 90%;
+      max-width: 92%;
     }
 
     .message.thinking {
-      background: #1a1a1a;
-      color: #666;
+      background: var(--bg-2);
+      border-color: var(--border-1);
+      color: #8f9db4;
       font-style: italic;
-    }
-
-    .input-area {
-      display: flex;
-      gap: 0.8rem;
-    }
-
-    input {
-      flex: 1;
-      padding: 0.9rem 1.2rem;
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 8px;
-      color: #f0f0f0;
-      font-size: 0.95rem;
-      outline: none;
-    }
-
-    input:focus {
-      border-color: #444;
-    }
-
-    button {
-      padding: 0.9rem 1.5rem;
-      background: #ffffff;
-      color: #000000;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #e0e0e0;
-    }
-
-    button:disabled {
-      background: #333;
-      color: #666;
-      cursor: not-allowed;
     }
 
     .suggestions {
@@ -131,25 +136,80 @@
     }
 
     .suggestion {
-      padding: 0.4rem 0.9rem;
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      color: #888;
+      padding: 0.45rem 0.85rem;
+      background: #121925;
+      border: 1px solid #2d394d;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      color: #aeb9cb;
       cursor: pointer;
+      transition: all 0.16s ease;
     }
 
     .suggestion:hover {
-      border-color: #444;
-      color: #f0f0f0;
+      border-color: #45608f;
+      color: #e7eefc;
+      background: #162133;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 0.65rem;
+    }
+
+    input {
+      flex: 1;
+      padding: 0.85rem 1rem;
+      background: #0f1622;
+      border: 1px solid #2f3d53;
+      border-radius: 10px;
+      color: #ebf1fb;
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+    }
+
+    input::placeholder {
+      color: #7f8da3;
+    }
+
+    input:focus {
+      border-color: #597bc2;
+      background: #101a2a;
+      box-shadow: 0 0 0 3px rgba(94, 130, 198, 0.22);
+    }
+
+    button {
+      padding: 0.85rem 1.2rem;
+      background: linear-gradient(180deg, #6f97f7 0%, #527be1 100%);
+      color: #f4f7ff;
+      border: 1px solid #6288e6;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.12s ease, filter 0.12s ease;
+    }
+
+    button:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      background: #263042;
+      border-color: #303d53;
+      color: #7f8da3;
+      cursor: not-allowed;
+      transform: none;
+      filter: none;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>Amboras Theme Intelligence</h1>
+      <h1>Theme Intelligence - POC</h1>
       <p>Ask anything about this Shopify store's design system</p>
     </div>
 
